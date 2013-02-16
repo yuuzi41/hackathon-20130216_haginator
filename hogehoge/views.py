@@ -19,6 +19,8 @@ def result(request):
 		dist = 0.0
 		for ans_key, ans_val in request.GET.iteritems():
 			sample = Samples.objects.filter(question=int(ans_key), music=m.id)
+			
+			# weighted 2-norm
 			coeff = 1
 			if int(ans_key) < 3:
 				coeff = 5
