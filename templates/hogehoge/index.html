@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+
+		<!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame
+		Remove this if you use the .htaccess -->
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+		<title>result</title>
+		<meta name="description" content="" />
+		<meta name="author" content="Nagai" />
+
+		<meta name="viewport" content="width=device-width; initial-scale=1.0" />
+
+		<!-- Replace favicon.ico & apple-touch-icon.png in the root of your domain and delete these references -->
+		<link rel="shortcut icon" href="/favicon.ico" />
+		<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+	</head>
+
+	<body>
+		<div>
+			<header>
+				<h1>Question</h1>
+			</header>
+
+			<div>
+
+	<form method="get" action="result" name="input">
+	{% for question in questions %}
+	<p>
+ 	質問：「{{question.content}}」 <br />
+ 		<input type="radio" name="{{question.id}}" value=100> はい
+		<input type="radio" name="{{question.id}}" value=0> いいえ
+		<input type="radio" name="{{question.id}}" value=50 checked> どちらでもない		
+	</p>
+
+	{% endfor %}
+	<input type="submit" value="送信" />
+	</form>
+
+			</div>
+
+			<footer>
+				<p>
+					&copy; Copyright  by Nagai
+				</p>
+			</footer>
+		</div>
+	</body>
+</html>
+
