@@ -1,4 +1,3 @@
-# Create your views here.
 from django.template import Context, loader
 from hogehoge.models import Questions, Musics, Samples
 from django.http import HttpResponse
