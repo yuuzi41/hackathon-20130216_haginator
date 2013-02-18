@@ -4,7 +4,7 @@ from hogehoge.models import Questions, Musics, Samples
 from django.http import HttpResponse
 
 def index(request):
-	questions = Questions.objects.all().order_by()
+	questions = Questions.objects.all().order_by('priority')
 	t = loader.get_template('hogehoge/index.html')
 	c = Context({
 		'questions': questions, 
