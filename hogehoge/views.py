@@ -14,6 +14,7 @@ def index(request):
 def result(request):
 	cand_dist = float("infinity")
 	cand_song = None
+	cand_songs = [(cand_dist, cand_song)]
 	
 	for m in Musics.objects.all():
 		dist = 0.0
@@ -28,11 +29,18 @@ def result(request):
 				dist = dist + coeff * ((int(ans_val) - sample[0].value)**2)
 		if cand_dist > dist:
 			cand_dist = dist
-			cand_music = m
+			cand_song = m
+		candlistlen = 9 if (len(cand_songs)-1)>9 else len(cand_songs)-1
+		if cand_songs[candlistlen][0] > dist:
+			for var in range(0, 9 if len(cand_songs)>9 else len(cand_songs)):
+				if cand_songs[var][0] > dist:
+					cand_songs.insert(var, (dist, m))
+					break
 
 	t = loader.get_template('hogehoge/result.html')
 	c = Context({
-		'music': cand_music, 
+		'music' : cand_song, 
+		'list'  : cand_songs
 	})
 	return HttpResponse(t.render(c))
 
