@@ -1,6 +1,7 @@
 from django.template import Context, loader
 from hogehoge.models import Questions, Musics, Samples
 from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
 
 def index(request):
 	questions = Questions.objects.all().order_by('priority')
@@ -30,7 +31,7 @@ def result(request):
 			cand_music = m
 
 	t = loader.get_template('hogehoge/result.html')
-        c = Context({
+	c = Context({
 		'music': cand_music, 
 	})
 	return HttpResponse(t.render(c))
@@ -39,7 +40,8 @@ def matrix(request):
 	questions = Questions.objects.all()
 	musics = Musics.objects.all()
 
-	body = "<table><tr><th></th>"
+	body = "<form method=\"POST\" action=\"edit\">"
+	body = body + "<table><tr><th></th>"
 	for q in questions:
 		body = body + "<th>" + q.content + "</th>"
 	body = body + "</tr>\n"
@@ -50,10 +52,42 @@ def matrix(request):
 			if len(s) > 1:
 				body = body + "<td>multiple</td>"
 			elif len(s) > 0:
-				body = body + "<td>" + str(s[0].value) + "</td>"
+				body = body \
+				+ "<td align=\"center\"><input type=\"text\" size=\"3\" name=\""\
+				+ str(s[0].id) \
+				+ "\" value =\"" \
+				+ str(s[0].value) \
+				+ "\"></td>"
 			else:
-				body = body + "<td></td>"
+				body = body + "<td align=\"center\"><input type=\"text\" size=\"3\" name=\"" \
+				+ "undef" + str(m.id) + ";" + str(qq.id) + "\" value= \"\" /></td>"
 		body = body + "</tr>\n"
 	body = body + "</table>"
+	body = body + "<input type=\"submit\" /></form>" 
 
+	return HttpResponse(body)
+
+#TODO: remove csrf exempt before public release.
+@csrf_exempt
+def edit(request):
+	body = ""
+	for key, value in request.POST.iteritems():
+		if str(key).startswith("undef"):
+			if value != "":
+				mqid = str(key).replace("undef", "").split(";")
+				music = Musics.objects.get(id=mqid[0])
+				question = Questions.objects.get(id=mqid[1])
+				body += "<div id=\"context\">set " \
+				+ str(music) + " is " + str(question) \
+				+ " as " + str(value) + "</div>"
+				Samples(question=question, music=music, value=value).save()
+		else:
+			sample = Samples.objects.get(id=key)
+			if sample.value != int(value):
+				body += "<div id=\"context\">update " \
+				+ str(sample.music) + " is " + str(sample.question) \
+				+ " set " + str(sample.value) + " to " + str(value) \
+				+ "</div>"
+				sample.value = value
+				sample.save()
 	return HttpResponse(body)

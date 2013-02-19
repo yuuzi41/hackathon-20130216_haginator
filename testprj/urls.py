@@ -17,4 +17,5 @@ urlpatterns = patterns('',
     (r'hogehoge/$', 'hogehoge.views.index'),
     (r'hogehoge/result$', 'hogehoge.views.result'), 
     (r'hogehoge/matrix$', 'hogehoge.views.matrix'), 
+    (r'hogehoge/edit$', 'hogehoge.views.edit'),
 )
