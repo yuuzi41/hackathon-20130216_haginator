@@ -26,13 +26,13 @@
 
 			<div>
 				<h1>探していたのは…</h1>
-				<p>{{music.artist}}の{{music.title}}</p>
+				<p>{{music.artist}}の{{music.title}} <a href="/hogehoge/prob/learn?music={{music.id}}&{{qa_get}}">これだ！</a></p>
 				<br />
 			</div>
 			<div>
 				<h2>もしかして…</h2>
 				{% for elements in list %}
-				<font size=2>距離:{{elements.0}} タイトル:{{elements.1.title}} アーティスト:{{elements.1.artist}}</font><br />
+				<font size=2>距離:{{elements.0}} タイトル:{{elements.1.title}} アーティスト:{{elements.1.artist}} <a href="/hogehoge/prob/learn?music={{elements.1.id}}&{{qa_get}}">これだ！</a></font><br />
 				{% endfor %}
 			</div>
 			<footer>

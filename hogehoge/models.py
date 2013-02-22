@@ -20,3 +20,12 @@ class Samples(models.Model):
 	value = models.IntegerField()
 	def __unicode__(self):
 		return self.music.title + " - " + self.question.content
+
+class ProbDist(models.Model):
+	question = models.ForeignKey(Questions)
+	music = models.ForeignKey(Musics)
+	num = models.DecimalField(max_digits=12, decimal_places=0)
+	sum = models.DecimalField(max_digits=15, decimal_places=0)
+	sqsum = models.DecimalField(max_digits=15, decimal_places=0)
+	def __unicode__(self):
+		return self.music.title + " - " + self.question.content

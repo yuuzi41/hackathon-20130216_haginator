@@ -1,7 +1,11 @@
+# -*- coding: utf-8 -*-
 from django.template import Context, loader
-from hogehoge.models import Questions, Musics, Samples
+from hogehoge.models import Questions, Musics, Samples, ProbDist
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
+from decimal import Decimal
+
+import urllib
 
 def index(request):
 	questions = Questions.objects.all().order_by('priority')
@@ -40,7 +44,8 @@ def result(request):
 	t = loader.get_template('hogehoge/result.html')
 	c = Context({
 		'music' : cand_song, 
-		'list'  : cand_songs
+		'list'  : cand_songs,
+		'qa_get': urllib.urlencode(request.GET), 
 	})
 	return HttpResponse(t.render(c))
 
@@ -99,3 +104,43 @@ def edit(request):
 				sample.value = value
 				sample.save()
 	return HttpResponse(body)
+
+#bayes prepare
+def prob_import(request):
+	body = ""
+	for itm in Samples.objects.all():
+		probdist_arr = ProbDist.objects.filter(question=itm.question, music=itm.music)
+		if len(probdist_arr) > 0:
+			body += "<p>[UPDATE] "
+			tgt = probdist_arr[0]
+		else:
+			body += "<p>[INSERT] "
+			tgt = ProbDist(question=itm.question, music=itm.music)
+		tgt.num = Decimal(12)
+		tgt.sum = Decimal(100+10*itm.value)
+		tgt.sqsum = Decimal(10000+10*(itm.value**2))
+		tgt.save()
+		body += str(itm.music) + " : " + str(itm.question) + " = mean:" + '%.2f' % (tgt.sum/tgt.num) + ", var:" + '%.2f' % (tgt.sqsum/tgt.num - (tgt.sum/tgt.num)**2) + "</p>"
+	return HttpResponse(body)
+
+def prob_learn(request):
+	q_a_sample = {}
+	for ans_key, ans_val in request.GET.iteritems():
+		if str(ans_key).startswith("music"):
+			learn_music = Musics.objects.get(id=ans_val)
+		else:
+			q_a_sample[int(ans_key)] = int(ans_val)
+	for q_num, a_val in q_a_sample.iteritems():
+		probdist_arr = ProbDist.objects.filter(question=q_num, music=learn_music)
+		if len(probdist_arr) > 0:
+			probdist_arr[0].num += Decimal(1)
+			probdist_arr[0].sum += Decimal(a_val)
+			probdist_arr[0].sqsum += Decimal(a_val**2)
+			probdist_arr[0].save()
+		else:
+			p = ProbDist(question=q_num, music=learn_music)
+			p.num = Decimal(4)
+			p.sum = Decimal(100 + 2*a_val)
+			p.sqsum = Decimal(10000 + 2*(a_val**2))
+			p.save()
+	return HttpResponse('おぼえましたし <a href="/hogehoge/">はじめから</a>')
