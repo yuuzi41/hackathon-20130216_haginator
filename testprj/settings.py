@@ -13,22 +13,22 @@ ADMINS = (
 MANAGERS = ADMINS
 
 DATABASES = {
-#  'default': {
-#    'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#    'NAME': 'dae1no7eb17uv6',
-#    'HOST': 'ec2-54-243-242-213.compute-1.amazonaws.com',
-#    'PORT': 5432,
-#    'USER': 'knvkpjeuonhuwh',
-#    'PASSWORD': 'PX2UpOP5w_ij5DxGxS5J7acRYo'
-#  }
   'default': {
-    'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-    'NAME': ROOT_PATH + '/../data.sqlite3',                      # Or path to database file if using sqlite3.
-    'USER': '',                      # Not used with sqlite3.
-    'PASSWORD': '',                  # Not used with sqlite3.
-    'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
-    'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
+    'ENGINE': 'django.db.backends.postgresql_psycopg2',
+    'NAME': 'dae1no7eb17uv6',
+    'HOST': 'ec2-54-243-242-213.compute-1.amazonaws.com',
+    'PORT': 5432,
+    'USER': 'knvkpjeuonhuwh',
+    'PASSWORD': 'PX2UpOP5w_ij5DxGxS5J7acRYo'
   }
+#  'default': {
+#    'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+#    'NAME': ROOT_PATH + '/../data.sqlite3',                      # Or path to database file if using sqlite3.
+#    'USER': '',                      # Not used with sqlite3.
+#    'PASSWORD': '',                  # Not used with sqlite3.
+#    'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
+#    'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
+#  }
 }
 
 # Local time zone for this installation. Choices can be found here:
