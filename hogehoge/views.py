@@ -138,7 +138,7 @@ def prob_learn(request):
 			probdist_arr[0].sqsum += Decimal(a_val**2)
 			probdist_arr[0].save()
 		else:
-			p = ProbDist(question=q_num, music=learn_music)
+			p = ProbDist(question=Questions.objects.get(id=q_num), music=learn_music)
 			p.num = Decimal(4)
 			p.sum = Decimal(100 + 2*a_val)
 			p.sqsum = Decimal(10000 + 2*(a_val**2))
