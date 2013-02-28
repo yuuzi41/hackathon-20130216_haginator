@@ -45,6 +45,7 @@ def result(request):
 	c = Context({
 		'music' : cand_song, 
 		'list'  : cand_songs,
+		'qa_dict': request.GET.items(), 
 		'qa_get': urllib.urlencode(request.GET), 
 	})
 	return HttpResponse(t.render(c))
@@ -144,3 +145,24 @@ def prob_learn(request):
 			p.sqsum = Decimal(10000 + 2*(a_val**2))
 			p.save()
 	return HttpResponse('おぼえましたし <a href="/hogehoge/">はじめから</a>')
+
+def prob_new(request):
+	q_a_sample = {}
+	for ans_key, ans_val in request.GET.iteritems():
+		if str(ans_key).startswith("music_title"):
+			new_music_title = ans_val
+		elif str(ans_key).startswith("music_artist"):
+			new_music_artist = ans_val
+                else:
+			q_a_sample[int(ans_key)] = int(ans_val)
+	learn_music = Musics(title=new_music_title, artist=new_music_artist)
+	learn_music.save()
+	for q_num, a_val in q_a_sample.iteritems():
+		# 新しい曲なら、既に確率分布が保存されているはずはない
+		p = ProbDist(question=Questions.objects.get(id=q_num), music=learn_music)
+		p.num = Decimal(4)
+		p.sum = Decimal(100 + 2*a_val)
+		p.sqsum = Decimal(10000 + 2*(a_val**2))
+		p.save()
+	return HttpResponse('新規おぼえましたし <a href="/hogehoge/">はじめから</a>')
+

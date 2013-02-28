@@ -35,6 +35,17 @@
 				<font size=2>距離:{{elements.0}} タイトル:{{elements.1.title}} アーティスト:{{elements.1.artist}} <a href="/hogehoge/prob/learn?music={{elements.1.id}}&{{qa_get}}">これだ！</a></font><br />
 				{% endfor %}
 			</div>
+			<div>
+				<h2>上になかったら</h2>
+				<form method="GET" action="/hogehoge/prob/new">
+					{% for element in qa_dict %}
+					<input type="hidden" name="{{element.0}}" value="{{element.1}}" />
+					{% endfor %}
+					<p>タイトル：<input type="text" name="music_title" /></p>
+					<p>アーティスト：<input type="text" name="music_artist" /></p>
+					<p><input type="submit" value="送信" /></p>
+				</form>
+			</div>
 			<footer>
 				<p>
 					&copy; Copyright  by Nagai
