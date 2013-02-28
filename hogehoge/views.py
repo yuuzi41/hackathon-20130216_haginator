@@ -6,6 +6,7 @@ from django.views.decorators.csrf import csrf_exempt
 from decimal import Decimal
 
 import urllib
+import math
 
 def index(request):
 	questions = Questions.objects.all().order_by('priority')
@@ -166,3 +167,39 @@ def prob_new(request):
 		p.save()
 	return HttpResponse('新規おぼえましたし <a href="/hogehoge/">はじめから</a>')
 
+def prob_result(request):
+	cand_dist = 0
+	cand_song = None
+	cand_songs = [(cand_dist, cand_song)]
+	
+	for m in Musics.objects.all():
+		dist = 1.0
+		for ans_key, ans_val in request.GET.iteritems():
+			prob = ProbDist.objects.filter(question=int(ans_key), music=m.id)
+
+			# normal distribution : probability density function 
+			if len(prob) > 0:
+				nd_mean = float(prob[0].sum/prob[0].num)
+				nd_var = float(prob[0].sqsum/prob[0].num) - nd_mean**2
+			else: #確率分布がデータベースにない : 平均50 分散2500 を仮定
+				nd_mean = 50.0
+				nd_var = 2500.0
+			dist = dist * (math.exp((-(float(ans_val) - nd_mean)**2)/(2*nd_var))/math.sqrt(2 * math.pi * nd_var))
+		if cand_dist < dist:
+			cand_dist = dist
+			cand_song = m
+		candlistlen = 9 if (len(cand_songs)-1)>9 else len(cand_songs)-1
+		if cand_songs[candlistlen][0] < dist:
+			for var in range(0, 9 if len(cand_songs)>9 else len(cand_songs)):
+				if cand_songs[var][0] < dist:
+					cand_songs.insert(var, (dist, m))
+					break
+
+	t = loader.get_template('hogehoge/result.html')
+	c = Context({
+		'music' : cand_song, 
+		'list'  : cand_songs[:-1], #最後にある番人データを省く
+		'qa_dict': request.GET.items(), 
+		'qa_get': urllib.urlencode(request.GET), 
+	})
+	return HttpResponse(t.render(c))

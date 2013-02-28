@@ -20,4 +20,6 @@ urlpatterns = patterns('',
     (r'hogehoge/edit$', 'hogehoge.views.edit'),
     (r'hogehoge/prob/import$', 'hogehoge.views.prob_import'),
     (r'hogehoge/prob/learn$', 'hogehoge.views.prob_learn'),
+    (r'hogehoge/prob/new$', 'hogehoge.views.prob_new'),
+    (r'hogehoge/prob/result$', 'hogehoge.views.prob_result'),
 )
